@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tes Intelegensi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f0fb;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(128,0,128,0.2);
+      padding: 30px;
+    }
+    h1, h2, h3 {
+      color: #6a0dad;
+    }
+    button {
+      background: #6a0dad;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #4b087c;
+    }
+    .hidden {
+      display: none;
+    }
+    .question {
+      margin: 15px 0;
+    }
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Halaman Selamat Datang -->
+  <div id="welcome">
+    <h1>Selamat Datang di Tes Intelegensi</h1>
+    <p>Tes ini bertujuan untuk mengukur kemampuan analogi verbal Anda.</p>
+    <button onclick="showPage('identity')">Lanjutkan</button>
+  </div>
+
+  <!-- Halaman Identitas -->
+  <div id="identity" class="hidden">
+    <h2>Identitas Peserta</h2>
+    <label>Nama:</label>
+    <input type="text" id="name">
+    <label>Usia:</label>
+    <input type="text" id="age">
+    <label>Jenis Kelamin:</label>
+    <select id="gender">
+      <option value="">Pilih</option>
+      <option value="Laki-laki">Laki-laki</option>
+      <option value="Perempuan">Perempuan</option>
+    </select>
+    <button onclick="startTest()">Mulai Tes</button>
+  </div>
+
+  <!-- Halaman Soal 1-10 -->
+  <div id="questions1" class="hidden">
+    <h2>Soal 1 - 10</h2>
+    <div id="questionBlock1"></div>
+    <button onclick="nextPage()">Lanjut ke Soal 11-20</button>
+  </div>
+
+  <!-- Halaman Soal 11-20 -->
+  <div id="questions2" class="hidden">
+    <h2>Soal 11 - 20</h2>
+    <div id="questionBlock2"></div>
+    <button onclick="showResult()">Lihat Hasil</button>
+  </div>
+
+  <!-- Halaman Hasil -->
+  <div id="result" class="hidden">
+    <h2>Hasil Tes</h2>
+    <p id="score"></p>
+    <button onclick="showPage('thanks')">Selesai</button>
+  </div>
+
+  <!-- Halaman Terima Kasih -->
+  <div id="thanks" class="hidden">
+    <h2>Terima Kasih!</h2>
+    <p>Anda telah menyelesaikan Tes Intelegensi. Semoga hari Anda menyenangkan!</p>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    "Tumpul : Pisau = Pecah : ?",
+    "Lapar : Makan = Haus : ?",
+    "Pensil : Menulis = Penggaris : ?",
+    "Pedas : Cabai = Manis : ?",
+    "Dokter : Rumah Sakit = Guru : ?",
+    "Kunci : Pintu = Remote : ?",
+    "Petani : Cangkul = Penulis : ?",
+    "Gigi : Mulut = Jari : ?",
+    "Ikan : Air = Burung : ?",
+    "Jantung : Darah = Paru-Paru : ?",
+    "Membangun : Merobohkan = Mencintai : ?",
+    "Aroma : Parfum = Suara : ?",
+    "Kereta Gantung : Kabel = Lift : ?",
+    "Kapas : Sutra = Baju : ?",
+    "Persegi Panjang : Balok = Lingkaran : ?",
+    "Sakelar : Lampu = Tuas : ?",
+    "Mata : Cahaya = Hidung : ?",
+    "Data : Jaringan = Darah : ?",
+    "Paru-Paru : Oksigen = Lambung : ?",
+    "Koki : Dapur = Montir : ?"
+  ];
+
+  const options = [
+    ["Kaca", "Retak", "Lem", "Pot", "Keras"],
+    ["Air", "Minuman", "Minum", "Dahaga", "Segar"],
+    ["Menggambar", "Melukis", "Menggaris", "Kertas", "Ukuran"],
+    ["Gula", "Madu", "Rasa", "Cokelat", "Garam"],
+    ["Pelajar", "Sekolah", "Kelas", "Buku", "Pendidikan"],
+    ["Tv", "Tombol", "Suara", "Baterai", "Layar"],
+    ["Komputer", "Kertas", "Pena", "Tinta", "Buku"],
+    ["Kuku", "Tangan", "Telapak", "Sarung Tangan", "Lengan"],
+    ["Udara", "Langit", "Terbang", "Angin", "Pohon"],
+    ["Oksigen", "Udara", "Napas", "Hidung", "Dada"],
+    ["Menghargai", "Membenci", "Merawat", "Mengenang", "Menyayangi"],
+    ["Gelombang", "Musik", "Alat", "Lagu", "Mikrofon"],
+    ["Tangga", "Poros", "Rel Vertikal", "Tiang", "Lorong"],
+    ["Celana", "Jas", "Kain", "Linen", "Wol"],
+    ["Tabung", "Bola", "Kerucut", "Balok", "Kubus"],
+    ["Listrik", "Mesin", "Gigi", "Tangga", "Dinding"],
+    ["Bau", "Aroma", "Wangi", "Udara", "Bau Busuk"],
+    ["Jantung", "Pembuluh", "Organ", "Plasma", "Nadi"],
+    ["Energi", "Nutrisi", "Makanan", "Pencernaan", "Lemak"],
+    ["Mobil", "Bengkel", "Mesin", "Oli", "Alat"]
+  ];
+
+  const correctAnswers = ["Kaca", "Minum", "Menggaris", "Gula", "Sekolah", "Tv", "Pena", "Tangan", "Udara", "Oksigen",
+                         "Membenci", "Musik", "Poros", "Kain", "Tabung", "Mesin", "Bau", "Pembuluh", "Makanan", "Bengkel"];
+
+  let userAnswers = [];
+
+  function showPage(id) {
+    document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+  }
+
+  function startTest() {
+    showPage('questions1');
+    renderQuestions('questionBlock1', 0, 10);
+  }
+
+  function nextPage() {
+    saveAnswers(0, 10);
+    showPage('questions2');
+    renderQuestions('questionBlock2', 10, 20);
+  }
+
+  function showResult() {
+    saveAnswers(10, 20);
+    let correct = userAnswers.filter((ans, i) => ans === correctAnswers[i]).length;
+    let score = Math.round((correct / correctAnswers.length) * 100);
+    document.getElementById('score').innerText = `Jawaban benar: ${correct} dari 20 soal. Skor Anda: ${score}%`;
+    showPage('result');
+  }
+
+  function renderQuestions(containerId, start, end) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    for (let i = start; i < end; i++) {
+      let q = document.createElement('div');
+      q.className = 'question';
+      q.innerHTML = `<p><strong>Soal ${i + 1}:</strong> ${questions[i]}</p>` +
+        options[i].map(opt => `
+          <label><input type="radio" name="q${i}" value="${opt}"> ${opt}</label>
+        `).join('');
+      container.appendChild(q);
+    }
+  }
+
+  function saveAnswers(start, end) {
+    for (let i = start; i < end; i++) {
+      const selected = document.querySelector(`input[name="q${i}"]:checked`);
+      userAnswers[i] = selected ? selected.value : "";
+    }
+  }
+</script>
+</body>
+</html>
